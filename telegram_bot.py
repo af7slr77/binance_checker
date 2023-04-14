@@ -1,5 +1,4 @@
 import time
-
 from auth import token_bot, user_id
 from aiogram import Bot, Dispatcher, executor, types
 from main import get_ticker, max_min_price_for_the_last_24_hr
@@ -18,44 +17,38 @@ async def check_time_frame(symbol, interval, diff_coefficient, max_coefficient, 
     min_price_for_24hr = max_min['min_price']
 
     if current_price == min_price_for_24hr or current_price <= min_price_for_24hr + min_coefficient:
-        await bot.send_message(user_id, f'MIN PRICE!!!' '\n' f'{symbol}:f{current_price}')
+        await bot.send_message(user_id, f'MIN PRICE{symbol}!!!' '\n' f'{symbol}:f{current_price}')
     if current_price >= max_price_for_24hr - max_coefficient or current_price == max_price_for_24hr:
-        await bot.send_message(user_id, f'MAX PRICE!!!' '\n' f'{symbol}:{current_price}', )
-    if difference >= diff_coefficient or difference <= diff_coefficient:
-        await bot.send_message(user_id, f'{current_price}' f'DIFF = {difference}')
+        await bot.send_message(user_id, f'MAX PRICE{symbol}!!!' '\n' f'{current_price}', )
+    if abs(difference) >= diff_coefficient:
+        await bot.send_message(user_id, f'{symbol}: {current_price}' '\n' f'DIFF: {difference} {interval}')
 
-
-async def check_eth():
-    symbol = "ETHUSDT"
-    diff_coefficient = 10
-    max_coefficient = 5
-    min_coefficient = 5
-    interval_15m = "15m"
-    interval_1h = "1h"
-    interval_4h = "15m"
-    await check_time_frame(symbol, interval_15m, diff_coefficient, max_coefficient, min_coefficient)
-    await check_time_frame(symbol, interval_1h, diff_coefficient, max_coefficient, min_coefficient)
-    await check_time_frame(symbol, interval_4h, diff_coefficient, max_coefficient, min_coefficient)
-
-
-async def check_usdt():
-    symbol = "USDTRUB"
-    diff_coefficient = 0.1
-    max_coefficient = 1
-    min_coefficient = 1
-    interval_15m = "15m"
-    interval_1h = "1h"
-    interval_4h = "15m"
-    await check_time_frame(symbol, interval_15m, diff_coefficient, max_coefficient, min_coefficient)
-    await check_time_frame(symbol, interval_1h, diff_coefficient, max_coefficient, min_coefficient)
-    await check_time_frame(symbol, interval_4h, diff_coefficient, max_coefficient, min_coefficient)
-
+async def check_intervals(symbol, intervals, diff_coefficient, max_coefficient, min_coefficient):
+    for interval in intervals:
+        await check_time_frame(symbol, interval, diff_coefficient, max_coefficient, min_coefficient)
+    
 
 async def main():
+    usdt_rub = {
+        "symbol":"USDTRUB",
+        "diff_coefficient":0.5, # price diffrent betwen open and close kline
+        "max_coefficient":0.3, # max_price_for_24hr - max_coefficient
+        "min_coefficient":0.3, # min_price_for_24hr + min_coefficient
+        "intervals":["15m", "1h", "4h"]
+    }
+    eth_usdt = {
+        "symbol":"ETHUSDT",
+        "diff_coefficient":10,
+        "max_coefficient":20,
+        "min_coefficient":30,
+        "intervals":["15m", "1h", "4h"],
+
+    }
+
     while True:
-        await check_eth()
-        await check_usdt()
-        await asyncio.sleep(10)
+        await check_intervals(**usdt_rub)
+        await check_intervals(**eth_usdt)
+        await asyncio.sleep(225)
 
 
 if __name__ == '__main__':

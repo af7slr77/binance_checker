@@ -24,8 +24,3 @@ def max_min_price_for_the_last_24_hr(symbol):
         'min_price': float(tiker_24hr['lowPrice'])
     }
     return data
-
-
-symbol = "ETHUSDT"
-interval = "15m"
-
