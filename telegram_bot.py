@@ -49,15 +49,15 @@ async def main():
 	usdt_rub = {
 		"symbol":"USDTRUB",
 		"diff_coefficient":0.5, # price diffrent betwen open and close kline
-		"max_coefficient":0.3, # max_price_for_24hr - max_coefficient
+		"max_coefficient":0.2, # max_price_for_24hr - max_coefficient
 		"min_coefficient":0.3, # min_price_for_24hr + min_coefficient
 		"intervals":["15m", "1h", "4h"]
 	}
 	eth_usdt = {
 		"symbol":"ETHUSDT",
 		"diff_coefficient":10,
-		"max_coefficient":20,
-		"min_coefficient":30,
+		"max_coefficient":15,
+		"min_coefficient":15,
 		"intervals":["15m", "1h", "4h"],
 
 	}
